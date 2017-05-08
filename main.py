@@ -12,6 +12,7 @@ def main():
 	curses.init_pair(CORRECT, curses.COLOR_GREEN, curses.COLOR_BLACK)
 	curses.init_pair(INCORRECT, curses.COLOR_RED, curses.COLOR_BLACK)
 	question = "abcdefg"
+	number_words  = len(list(question.split()))
 	correct_index, current_index =  -1, -1
 	no_errors = True 
 
@@ -28,6 +29,7 @@ def main():
 			correct_index - min(current_index, correct_index)
 		else:
 			current_index += 1
+			current_index = min(current_index, len(question) - 1)
 			if question[current_index] == chr(c) and no_errors:
 				correct_index += 1
 			elif question[current_index] != chr(c):
@@ -47,7 +49,8 @@ def main():
 			no_errors = True
 
 	end = time.time()
-	stdscr.addstr("Congratulations! Execution Time is " + str(round((end - start), 3)))
+	stdscr.addstr("Congratulations! Execution Time is " + str(round((end - start), 3))\
+		+ " and speed is " + str(round(number_words * 60/(end - start))))
 	stdscr.addstr("Press any key to continue...")
 	stdscr.getch()
 	curses.endwin()
