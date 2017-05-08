@@ -1,9 +1,14 @@
+#!/usr/bin/env python3
+
 import curses, time, wikiquote, random
 
 def get_quote():
 	title_name = random.choice(wikiquote.random_titles())
-	# title_name = 'Dune'
-	quote = random.choice(wikiquote.quotes(title_name))
+	quotes_ = wikiquote.quotes(title_name)
+	while len(quotes_) == 0:
+		title_name = random.choice(wikiquote.random_titles())
+		quotes_ = wikiquote.quotes(title_name)
+	quote = random.choice(quotes_)
 	return quote
 
 def main():
@@ -56,8 +61,8 @@ def main():
 
 	end = time.time()
 	stdscr.addstr("\nCongratulations! Execution Time is " + str(round((end - start), 3))\
-		+ " and speed is " + str(round(number_words * 60/(end - start))))
-	stdscr.addstr("Press any key to continue...")
+		+ " and speed is " + str(round(number_words * 60/(end - start))) + " WPM...")
+	stdscr.addstr("\nPress any key to continue...")
 	stdscr.getch()
 	curses.endwin()
 
