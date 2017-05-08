@@ -1,7 +1,14 @@
-import curses
-import time
+import curses, time, wikiquote, random
+
+def get_quote():
+	title_name = random.choice(wikiquote.random_titles())
+	# title_name = 'Dune'
+	quote = random.choice(wikiquote.quotes(title_name))
+	return quote
 
 def main():
+	print('Fetching quote...')
+	question = get_quote()
 	stdscr = curses.initscr()
 	curses.noecho()
 	curses.cbreak()
@@ -11,7 +18,6 @@ def main():
 	curses.init_pair(UNTOUCH, curses.COLOR_YELLOW, curses.COLOR_BLACK)
 	curses.init_pair(CORRECT, curses.COLOR_GREEN, curses.COLOR_BLACK)
 	curses.init_pair(INCORRECT, curses.COLOR_RED, curses.COLOR_BLACK)
-	question = "abcdefg"
 	number_words  = len(list(question.split()))
 	correct_index, current_index =  -1, -1
 	no_errors = True 
@@ -26,7 +32,7 @@ def main():
 		stdscr.move(0, 0)
 		if c == curses.KEY_BACKSPACE:
 			current_index = max(current_index - 1, -1)
-			correct_index - min(current_index, correct_index)
+			correct_index = min(current_index, correct_index)
 		else:
 			current_index += 1
 			current_index = min(current_index, len(question) - 1)
@@ -49,7 +55,7 @@ def main():
 			no_errors = True
 
 	end = time.time()
-	stdscr.addstr("Congratulations! Execution Time is " + str(round((end - start), 3))\
+	stdscr.addstr("\nCongratulations! Execution Time is " + str(round((end - start), 3))\
 		+ " and speed is " + str(round(number_words * 60/(end - start))))
 	stdscr.addstr("Press any key to continue...")
 	stdscr.getch()
