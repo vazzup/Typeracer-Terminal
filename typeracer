@@ -3,6 +3,13 @@
 import curses, time, wikiquote, random
 
 def get_quote():
+	'''
+	Function to get quote from wikiquote api
+	uses the wikiquote module from pypi
+	Get's a random title name,
+	then detches quotes
+	returns a random quote from the collection
+	'''
 	title_name = random.choice(wikiquote.random_titles())
 	quotes_ = wikiquote.quotes(title_name)
 	while len(quotes_) == 0:
@@ -15,24 +22,28 @@ def main():
 	print('Fetching quote...')
 	question = get_quote()
 	stdscr = curses.initscr()
-	curses.noecho()
-	curses.cbreak()
+	curses.noecho()	#Do not print whatever is read
+	curses.cbreak()	#If Ctrl + C is pressed, exit the program
 	stdscr.keypad(True)
-	curses.start_color()
-	UNTOUCH, CORRECT, INCORRECT = 1, 2, 3
-	curses.init_pair(UNTOUCH, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-	curses.init_pair(CORRECT, curses.COLOR_GREEN, curses.COLOR_BLACK)
-	curses.init_pair(INCORRECT, curses.COLOR_RED, curses.COLOR_BLACK)
-	number_words  = len(list(question.split()))
+	curses.start_color() #Allow for color in text
+	UNTOUCH, CORRECT, INCORRECT = 1, 2, 3 #Constants
+	curses.init_pair(UNTOUCH, curses.COLOR_YELLOW, curses.COLOR_BLACK) #Color Pair for Untouched string
+	curses.init_pair(CORRECT, curses.COLOR_GREEN, curses.COLOR_BLACK) #Color Pair for Correct string
+	curses.init_pair(INCORRECT, curses.COLOR_RED, curses.COLOR_BLACK) #Color Pair for Incorrect string
+	number_words  = len(list(question.split())) #Count number of words in quote
 	correct_index, current_index =  -1, -1
 	no_errors = True 
-
+	#Turn certain attributes on
 	stdscr.attron(curses.color_pair(UNTOUCH) | curses.A_STANDOUT)
 	stdscr.addstr(question)
 	stdscr.attroff(curses.color_pair(UNTOUCH))
+	#Wait until first key is pressed
+	#As soon as it is pressed, read it and buffer it back
+	#Then start the timer
 	curses.ungetch(stdscr.getch())
 	start = time.time()
 	while True:
+		#Main logic loop 
 		c = stdscr.getch()
 		stdscr.move(0, 0)
 		if c == curses.KEY_BACKSPACE:
@@ -59,6 +70,7 @@ def main():
 		if correct_index == current_index:
 			no_errors = True
 
+	#Self Explanatory
 	end = time.time()
 	stdscr.addstr("\nCongratulations! Execution Time is " + str(round((end - start), 3))\
 		+ " and speed is " + str(round(number_words * 60/(end - start))) + " WPM...")
